@@ -96,6 +96,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--report-k", type=int, default=20)
     parser.add_argument("--max-turns", type=int, default=12)
     parser.add_argument("--rating-scale", type=float, default=0.85)
+    parser.add_argument("--danger-threshold", type=float, default=None, help="Optional absolute severity threshold for dangerous cases.")
+    parser.add_argument("--danger-quantile", type=float, default=0.95, help="Empirical severity quantile used when --danger-threshold is not set.")
     parser.add_argument(
         "--api-mode",
         choices=["generate", "chat"],
@@ -190,7 +192,14 @@ def main() -> None:
                     require_submit=args.require_submit,
                 )
                 out = agent.run(case, candidates)
-                metrics = score_agent(case, out, oracle, top_m=args.report_k)
+                metrics = score_agent(
+                    case,
+                    out,
+                    oracle,
+                    top_m=args.report_k,
+                    danger_threshold=args.danger_threshold,
+                    danger_quantile=args.danger_quantile,
+                )
                 metrics["case_seed"] = seed
                 metrics["n_candidates"] = len(candidates)
                 rows.append(metrics)
