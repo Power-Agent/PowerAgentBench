@@ -26,11 +26,12 @@ Allowed tools and canonical arguments:
 1. {"tool":"case_summary","args":{}}
 2. {"tool":"rank_base_loading","args":{"top_n":80}}
 3. {"tool":"rank_lodf","args":{"top_n":80}}
-4. {"tool":"validate","args":{"contingencies":[[2,11],[11,37],[11,43],[11,21],[11,41],[11,45],[11,26],[11,15],[11,16],[11,29]]}}
-5. {"tool":"redispatch","args":{"focus":[[2,11],[11,37],[11,43],[11,21],[11,41]]}}
-6. {"tool":"submit","args":{"reported":[[2,11],[11,37],[11,43],[11,21],[11,41]],"diagnosis":"brief evidence-backed summary"}}
+4. {"tool":"validate","args":{"contingencies":[[0,1],[2,3],[4,5],[6,7],[8,9],[10,12],[13,14],[15,16],[17,18],[19,20]]}}
+5. {"tool":"redispatch","args":{"focus":[[0,1],[2,3],[4,5],[6,7],[8,9]]}}
+6. {"tool":"submit","args":{"reported":[[0,1],[2,3],[4,5],[6,7],[8,9]],"diagnosis":"brief evidence-backed summary"}}
 
 Important rules:
+- The numeric branch pairs in the examples are schema-only placeholders, not recommended candidates.
 - A contingency is a pair of branch ids [i,j], not bus ids.
 - Branch ids are integers from 0 to n_branch-1.
 - Use the canonical field name "contingencies" for validate and "reported" for submit.
@@ -205,6 +206,7 @@ class LLMToolAgent:
             name=self.name,
             validated=server.state.validated,
             reported=final_reported[: self.report_k],
+            post_validated=server.state.post_validated,
             mitigated_case=server.state.mitigated_case,
             action_cost=server.state.action_cost,
             tool_log=server.state.tool_log,
@@ -229,11 +231,12 @@ class LLMToolAgent:
             "validation_budget": self.validation_budget,
             "report_k": self.report_k,
             "allowed_tools": ["case_summary", "rank_base_loading", "rank_lodf", "validate", "redispatch", "submit"],
+            "schema_example_note": "The numeric branch pairs below are placeholders that illustrate JSON shape only; they are not recommendations.",
             "canonical_json_examples": [
                 {"tool": "case_summary", "args": {}},
                 {"tool": "rank_lodf", "args": {"top_n": 80}},
-                {"tool": "validate", "args": {"contingencies": [[2, 11], [11, 37], [11, 43], [11, 21], [11, 41], [11, 45], [11, 26], [11, 15], [11, 16], [11, 29]]}},
-                {"tool": "submit", "args": {"reported": [[2, 11], [11, 37], [11, 43], [11, 21], [11, 41]], "diagnosis": "brief evidence-backed summary"}},
+                {"tool": "validate", "args": {"contingencies": [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9], [10, 12], [13, 14], [15, 16], [17, 18], [19, 20]]}},
+                {"tool": "submit", "args": {"reported": [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]], "diagnosis": "brief evidence-backed summary"}},
             ],
         }
         return [{"role": "system", "content": self.system_prompt}, {"role": "user", "content": json.dumps(user)}]

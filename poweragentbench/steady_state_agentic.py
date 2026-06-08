@@ -94,6 +94,7 @@ class AgentOutput:
     name: str
     validated: Dict[Contingency, float]
     reported: List[Contingency]
+    post_validated: Dict[Contingency, float] = field(default_factory=dict)
     mitigated_case: GridCase | None = None
     action_cost: float = 0.0
     tool_log: List[Dict[str, Any]] = field(default_factory=list)
@@ -479,11 +480,21 @@ def redispatch_cost(case: GridCase, new_gen: np.ndarray) -> float:
     return float(np.sum(np.abs(new_gen - case.gen_p) * case.gen_cost) / 100.0)
 
 
-def mitigation_objective(case: GridCase, contingencies: Sequence[Contingency], cost_weight: float = 0.015) -> float:
-    score = dc_power_flow(case, ()).severity
+def mitigation_objective(
+    reference_case: GridCase,
+    candidate_case: GridCase,
+    contingencies: Sequence[Contingency],
+    cost_weight: float = 0.015,
+) -> float:
+    """Severity-plus-cost objective for preventive redispatch.
+
+    reference_case is the original pre-action case.
+    candidate_case is the trial redispatched case.
+    """
+    score = dc_power_flow(candidate_case, ()).severity
     for contingency in contingencies:
-        score += dc_power_flow(case, contingency).severity
-    return float(score + cost_weight * redispatch_cost(case, case.gen_p))
+        score += dc_power_flow(candidate_case, contingency).severity
+    return float(score + cost_weight * redispatch_cost(reference_case, candidate_case.gen_p))
 
 
 def greedy_preventive_redispatch(
@@ -494,32 +505,46 @@ def greedy_preventive_redispatch(
 ) -> Tuple[GridCase, float]:
     if not contingencies:
         return case, 0.0
+
+    reference_case = case
     current = case
-    current_obj = mitigation_objective(current, contingencies)
+    current_obj = mitigation_objective(reference_case, current, contingencies)
+
     for _ in range(max_steps):
         best_case = current
         best_obj = current_obj
         g = current.gen_p
+
         for up in range(current.n_gen):
             for down in range(current.n_gen):
                 if up == down:
                     continue
+
                 trial = g.copy()
-                step = min(step_mw, current.gen_max[up] - trial[up], trial[down] - current.gen_min[down])
+                step = min(
+                    step_mw,
+                    current.gen_max[up] - trial[up],
+                    trial[down] - current.gen_min[down],
+                )
                 if step <= 1e-6:
                     continue
+
                 trial[up] += step
                 trial[down] -= step
                 candidate = current.with_generation(trial)
-                obj = mitigation_objective(candidate, contingencies)
+                obj = mitigation_objective(reference_case, candidate, contingencies)
+
                 if obj + 1e-9 < best_obj:
                     best_obj = obj
                     best_case = candidate
+
         if best_case is current:
             break
+
         current = best_case
         current_obj = best_obj
-    return current, redispatch_cost(case, current.gen_p)
+
+    return current, redispatch_cost(reference_case, current.gen_p)
 
 
 class NoValidationHeuristicAgent:
@@ -621,10 +646,23 @@ class HybridMitigationAgent(HybridToolAgent):
     def run(self, case: GridCase, candidates: Sequence[Contingency]) -> AgentOutput:
         base = super().run(case, candidates)
         focus = base.reported[: min(10, len(base.reported))]
-        mitigated, cost = greedy_preventive_redispatch(case, focus, max_steps=self.search_steps, step_mw=self.step_mw)
+        mitigated, cost = greedy_preventive_redispatch(
+            case,
+            focus,
+            max_steps=self.search_steps,
+            step_mw=self.step_mw,
+        )
         post_values = evaluate_contingencies(mitigated, list(base.validated.keys()))
-        reported = sorted(post_values, key=lambda c: post_values[c], reverse=True)[: self.report_k]
-        return AgentOutput("Hybrid+redispatch", post_values, reported, mitigated_case=mitigated, action_cost=cost, validation_budget=float(self.budget))
+
+        return AgentOutput(
+            name="Hybrid+redispatch",
+            validated=base.validated,
+            reported=base.reported,
+            post_validated=post_values,
+            mitigated_case=mitigated,
+            action_cost=cost,
+            validation_budget=float(self.budget),
+        )
 
 
 def normalize_contingency_list(raw: Any) -> List[Contingency]:
@@ -778,6 +816,7 @@ class ToolState:
     validation_budget: int
     report_k: int
     validated: Dict[Contingency, float] = field(default_factory=dict)
+    post_validated: Dict[Contingency, float] = field(default_factory=dict)
     mitigated_case: GridCase | None = None
     action_cost: float = 0.0
     tool_log: List[Dict[str, Any]] = field(default_factory=list)
@@ -800,7 +839,9 @@ class SteadyN2ToolServer:
     def execute(self, tool: str, args: MutableMapping[str, Any] | None) -> Tuple[Dict[str, Any], bool, List[Contingency] | None]:
         args = args or {}
         tool = tool.lower().strip()
-        eval_case = self.state.mitigated_case if self.state.mitigated_case is not None else self.case
+        # Discovery tools always operate on the original pre-action case.
+        # Post-action mitigation values are stored separately in state.post_validated.
+        eval_case = self.case
         if tool == "case_summary":
             base = dc_power_flow(eval_case, ())
             return {
@@ -885,9 +926,8 @@ class SteadyN2ToolServer:
             self.state.mitigated_case = mitigated
             self.state.action_cost = float(cost)
             post_values = evaluate_contingencies(mitigated, focus)
-            for c, v in post_values.items():
-                if c in self.state.validated:
-                    self.state.validated[c] = v
+            self.state.post_validated.update(post_values)
+
             obs = {
                 "action": "greedy_preventive_redispatch",
                 "cost": round(float(cost), 6),
@@ -930,30 +970,88 @@ def score_agent(
     output: AgentOutput,
     oracle_values: Dict[Contingency, float],
     top_m: int = 20,
-    danger_threshold: float = 0.05,
+    danger_threshold: float | None = None,
+    danger_quantile: float = 0.95,
 ) -> Dict[str, float | str]:
     ranked_oracle = sorted(oracle_values, key=lambda c: oracle_values[c], reverse=True)
-    oracle_top = set(ranked_oracle[:top_m])
-    dangerous = {c for c, v in oracle_values.items() if v >= danger_threshold}
+    oracle_top_list = ranked_oracle[:top_m]
+    oracle_top = set(oracle_top_list)
+
+    # Define "dangerous" cases in a scale-aware way.
+    # By default, use the top 5% by hidden severity rather than a fixed absolute
+    # threshold, because severity scales vary across stressed operating points.
+    if danger_threshold is None:
+        severity_values = np.array([float(v) for v in oracle_values.values()], dtype=float)
+        if severity_values.size == 0:
+            danger_cutoff = math.inf
+            dangerous: set[Contingency] = set()
+        else:
+            q = min(max(float(danger_quantile), 0.0), 1.0)
+            danger_cutoff = float(np.quantile(severity_values, q))
+            dangerous = {c for c, v in oracle_values.items() if float(v) >= danger_cutoff}
+        danger_definition = f"severity >= empirical q{danger_quantile:.2f}"
+    else:
+        danger_cutoff = float(danger_threshold)
+        dangerous = {c for c, v in oracle_values.items() if float(v) >= danger_cutoff}
+        danger_definition = f"severity >= {danger_cutoff:.6g}"
+
+    # Discovery evidence is pre-action evidence only.
     found = set(output.validated.keys())
     reported = set(output.reported)
+    evidence_backed_reported = reported & found
+
     best_oracle = oracle_values[ranked_oracle[0]] if ranked_oracle else 0.0
     best_validated = max((oracle_values.get(c, 0.0) for c in found), default=0.0)
     best_reported = max((oracle_values.get(c, 0.0) for c in reported), default=0.0)
+
     found_top = len(found & oracle_top) / max(1, len(oracle_top))
-    validated_top = len(reported & found & oracle_top) / max(1, len(oracle_top))
+    validated_top = len(evidence_backed_reported & oracle_top) / max(1, len(oracle_top))
     reported_top = len(reported & oracle_top) / max(1, len(oracle_top))
+
     danger_recall = len(found & dangerous) / max(1, len(dangerous))
     reported_precision = len(reported & dangerous) / max(1, len(reported))
-    evidence_rate = len(reported & found) / max(1, len(reported))
+    evidence_rate = len(evidence_backed_reported) / max(1, len(reported))
+
+    missed_top_reported = oracle_top - reported
+    missed_top_evidence = oracle_top - evidence_backed_reported
+    missed_danger_evidence = dangerous - evidence_backed_reported
+
+    top20_false_safe_rate = len(missed_top_reported) / max(1, len(oracle_top))
+    top20_evidence_false_safe_rate = len(missed_top_evidence) / max(1, len(oracle_top))
+
+    # Threshold-based false-safe metric over all dangerous cases.
+    false_safe_rate = len(missed_danger_evidence) / max(1, len(dangerous))
+
+    dangerous_weight = float(sum(max(0.0, float(oracle_values[c])) for c in dangerous))
+    severity_weighted_false_negative = (
+        0.0
+        if dangerous_weight <= 1e-12
+        else float(sum(max(0.0, float(oracle_values[c])) for c in missed_danger_evidence)) / dangerous_weight
+    )
+
+    top20_weight = float(sum(max(0.0, float(oracle_values[c])) for c in oracle_top))
+    top20_evidence_severity_weighted_false_negative = (
+        0.0
+        if top20_weight <= 1e-12
+        else float(sum(max(0.0, float(oracle_values[c])) for c in missed_top_evidence)) / top20_weight
+    )
+
+    unvalidated_claims = reported - found
+    unvalidated_claim_rate = len(unvalidated_claims) / max(1, len(reported))
 
     eval_case = output.mitigated_case if output.mitigated_case is not None else original_case
-    pre_top = float(np.mean([dc_power_flow(original_case, c).severity for c in ranked_oracle[:top_m]]))
-    post_top = float(np.mean([dc_power_flow(eval_case, c).severity for c in ranked_oracle[:top_m]]))
+
+    pre_top_values = [dc_power_flow(original_case, c).severity for c in oracle_top_list]
+    post_top_values = [dc_power_flow(eval_case, c).severity for c in oracle_top_list]
+
+    pre_top = float(np.mean(pre_top_values)) if pre_top_values else 0.0
+    post_top = float(np.mean(post_top_values)) if post_top_values else 0.0
     reduction = 0.0 if pre_top <= 1e-12 else (pre_top - post_top) / pre_top
+
     return {
         "agent": output.name,
         "validated_calls": float(len(output.validated)),
+        "post_validated_calls": float(len(output.post_validated)),
         "reported_top20_recall": reported_top,
         "validated_top20_recall": validated_top,
         "found_top20_recall": found_top,
@@ -963,29 +1061,62 @@ def score_agent(
         "best_capture_reported": 0.0 if best_oracle <= 1e-12 else best_reported / best_oracle,
         "best_capture_validated": 0.0 if best_oracle <= 1e-12 else best_validated / best_oracle,
         "severity_regret": best_oracle - best_validated,
+
+        # Dangerous-case definition used by threshold/quantile safety metrics.
+        "danger_definition": danger_definition,
+        "danger_cutoff": float(danger_cutoff),
+        "danger_count": float(len(dangerous)),
+
+        # Safety / false-safe diagnostics.
+        "top20_false_safe_rate": top20_false_safe_rate,
+        "top20_evidence_false_safe_rate": top20_evidence_false_safe_rate,
+        "false_safe_rate": false_safe_rate,
+        "severity_weighted_false_negative": severity_weighted_false_negative,
+        "top20_evidence_severity_weighted_false_negative": top20_evidence_severity_weighted_false_negative,
+        "unvalidated_claims": float(len(unvalidated_claims)),
+        "unvalidated_claim_rate": unvalidated_claim_rate,
+
+        # Mitigation diagnostics.
         "pre_top20_violation": pre_top,
         "post_top20_violation": post_top,
         "violation_reduction": reduction,
         "action_cost": float(output.action_cost),
+
+        # Workflow diagnostics.
         "invalid_tool_calls": float(output.invalid_tool_calls),
         "schema_repairs": float(output.schema_repairs),
         "type_coercions": float(output.type_coercions),
         "duplicate_validation_requests": float(output.duplicate_validation_requests),
         "submitted_explicitly": float(output.submitted_explicitly),
         "auto_finalized": float(output.auto_finalized),
-        "validation_budget_used": (float(len(output.validated)) / float(output.validation_budget)) if output.validation_budget else 0.0,
+        "validation_budget_used": (
+            float(len(output.validated)) / float(output.validation_budget)
+            if output.validation_budget
+            else 0.0
+        ),
     }
 
 
 def aggregate_metrics(rows: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
     if not rows:
         return {}
+
     out: Dict[str, Any] = {"agent": rows[0].get("agent", "agent")}
-    keys = [k for k, v in rows[0].items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
+    metadata_keys = {"case_seed", "n_candidates", "random_trial"}
+
+    keys = [
+        k
+        for k, v in rows[0].items()
+        if isinstance(v, (int, float))
+        and not isinstance(v, bool)
+        and k not in metadata_keys
+    ]
+
     for key in keys:
         arr = np.array([float(r[key]) for r in rows], dtype=float)
         out[f"{key}_mean"] = float(arr.mean())
         out[f"{key}_std"] = float(arr.std(ddof=0))
+
     return out
 
 
