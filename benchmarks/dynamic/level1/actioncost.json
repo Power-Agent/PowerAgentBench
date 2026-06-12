@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "task_id": "dynamic_level1_solar_dmq",
+  "cost_unit": "benchmark_cost_points",
+  "ranking_rule": "Primary: pass the full test suite. Secondary: fewer DMView simulations (lower iteration count).",
+  "costs": {
+    "dmview_suite_run": {
+      "cost_per_run": 100.0,
+      "rationale": "Each full DMView suite execution is the dominant cost (one PSS/E dynamic run per test)."
+    },
+    "gain_update": {
+      "cost_per_update": 0.0,
+      "rationale": "Editing the allowed gains is free; only simulations are charged."
+    }
+  },
+  "budget": {
+    "max_suite_runs": 5,
+    "note": "The baseline suite run is provided by the harness and is not charged against the budget."
+  }
+}

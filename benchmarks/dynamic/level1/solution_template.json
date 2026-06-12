@@ -1,0 +1,10 @@
+{
+  "task_id": "dynamic_level1_solar_dmq",
+  "actions": [
+    {"id": "Kqp", "value": 10.0},
+    {"id": "Kqi", "value": 50.0},
+    {"id": "Kvp", "value": 10.0},
+    {"id": "Kvi", "value": 50.0}
+  ],
+  "_note": "Replace the four values with your proposed REECAU1 gains (each in the open-closed range (0, 100]). The values above are the corrupted baseline. A known-good reference solution is (Kqp, Kqi, Kvp, Kvi) = (1, 5, 1, 5)."
+}

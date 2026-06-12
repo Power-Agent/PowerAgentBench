@@ -1,0 +1,100 @@
+{
+  "schema_version": "1.0",
+  "task_id": "dynamic_level1_solar_dmq",
+  "name": "WECC Solar Dynamic Model Quality Review (Level 1)",
+  "domain": "dynamic",
+  "case": "solar_wecc",
+  "case_files": {
+    "power_flow": "cases/solar_wecc/psse/Solar.sav",
+    "dynamic_model": "cases/solar_wecc/psse/Solar.dyr"
+  },
+  "simulator": {
+    "tool": "DMView 3.4 (ERCOT dynamic-model review)",
+    "engine": "PSS/E 36.2",
+    "note": "DMView exposes the model-quality test suite; the harness runs it as a tool."
+  },
+  "objective": "Repair the submitted REECAU1 controller so the model passes the full DMView model-quality test suite, modifying only the four allowed gains.",
+  "model_under_review": {
+    "model": "REECAU1",
+    "bus": 91003,
+    "machine_id": "S1",
+    "locked": "All other .dyr parameters and all other models (REGCAU1, REPCAU1) are locked."
+  },
+  "iteration_budget": 5,
+  "test_suite": [
+    {"id": "Test01_FS", "type": "FS", "description": "Flat start, no disturbance (10 s). Output must hold steady."},
+    {"id": "Test02_VOLTDOWN", "type": "VOLT", "description": "Voltage reference step down."},
+    {"id": "Test03_VOLTUP", "type": "VOLT", "description": "Voltage reference step up."},
+    {"id": "Test04_FRQDOWN", "type": "FREQ", "description": "Frequency step down."},
+    {"id": "Test05_FRQUP", "type": "FREQ", "description": "Frequency step up."},
+    {"id": "Test06_HVRT", "type": "VOLT", "description": "High-voltage ride-through."},
+    {"id": "Test07_LVRT", "type": "VOLT", "description": "Low-voltage ride-through; checks momentary-cessation duration."},
+    {"id": "Test08_SCR2", "type": "SCR2", "description": "Graded weak-grid short-circuit-ratio test (SCR 5 -> 3 -> 1.5 -> 1.2). Graded levels 5, 3, 1.5 must be stable; 1.2 is informational only."}
+  ],
+  "actions": [
+    {
+      "id": "Kqp",
+      "category": "reecau1_gain",
+      "type": "dyr_parameter_value",
+      "model": "REECAU1",
+      "bus": 91003,
+      "machine_id": "S1",
+      "dyr_data_token": 24,
+      "description": "Reactive-power-control proportional gain.",
+      "unit": "pu",
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "min_inclusive": false,
+      "max_inclusive": true,
+      "initial_value": 10.0
+    },
+    {
+      "id": "Kqi",
+      "category": "reecau1_gain",
+      "type": "dyr_parameter_value",
+      "model": "REECAU1",
+      "bus": 91003,
+      "machine_id": "S1",
+      "dyr_data_token": 25,
+      "description": "Reactive-power-control integral gain.",
+      "unit": "pu",
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "min_inclusive": false,
+      "max_inclusive": true,
+      "initial_value": 50.0
+    },
+    {
+      "id": "Kvp",
+      "category": "reecau1_gain",
+      "type": "dyr_parameter_value",
+      "model": "REECAU1",
+      "bus": 91003,
+      "machine_id": "S1",
+      "dyr_data_token": 26,
+      "description": "Voltage-control proportional gain.",
+      "unit": "pu",
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "min_inclusive": false,
+      "max_inclusive": true,
+      "initial_value": 10.0
+    },
+    {
+      "id": "Kvi",
+      "category": "reecau1_gain",
+      "type": "dyr_parameter_value",
+      "model": "REECAU1",
+      "bus": 91003,
+      "machine_id": "S1",
+      "dyr_data_token": 27,
+      "description": "Voltage-control integral gain.",
+      "unit": "pu",
+      "min_value": 0.0,
+      "max_value": 100.0,
+      "min_inclusive": false,
+      "max_inclusive": true,
+      "initial_value": 50.0
+    }
+  ]
+}

@@ -9,24 +9,36 @@ The benchmark is built around a public/hidden split. Agents see public case data
 ```text
 PowerAgentBench/
 ├── cases/                                      # Network case data in multiple formats
-│   └── case39/
-│       ├── pypsa/case39.nc                     # PyPSA netCDF format
-│       ├── matpower/case39.m                   # MATPOWER .m format
-│       └── pandapower/case39.json              # PandaPower JSON format
+│   ├── case39/
+│   │   ├── pypsa/case39.nc                     # PyPSA netCDF format
+│   │   ├── matpower/case39.m                   # MATPOWER .m format
+│   │   └── pandapower/case39.json              # PandaPower JSON format
+│   └── solar_wecc/
+│       └── psse/                               # WECC solar PV dynamic case (PSS/E)
+│           ├── Solar.sav                       # Power-flow case
+│           └── Solar.dyr                       # Dynamic model (corrupted REECAU1 gains)
 ├── benchmarks/                                 # Benchmark definitions and task configs
-│   └── steady/
-│       ├── level_1/                            # N-1 steady-state audit and mitigation
-│       │   ├── README.md                       # Full Level 1 benchmark specification
-│       │   ├── actionspace.json                # Action contract and operating limits
-│       │   ├── actioncost.json                 # Per-step action costs
-│       │   ├── baseline_summary.json
-│       │   └── solution_template.json
-│       └── level_2/                            # Agentic N-2 search and mitigation
-│           ├── README.md                       # Full Level 2 benchmark specification
-│           ├── .env.example                    # Template for private model/API configuration
-│           ├── .gitignore                      # Keeps local .env files out of git
-│           └── prompts/
-│               └── steady_n2_llm_prompt.json   # Shared LLM tool-use prompt template
+│   ├── steady/
+│   │   ├── level_1/                            # N-1 steady-state audit and mitigation
+│   │   │   ├── README.md                       # Full Level 1 benchmark specification
+│   │   │   ├── actionspace.json                # Action contract and operating limits
+│   │   │   ├── actioncost.json                 # Per-step action costs
+│   │   │   ├── baseline_summary.json
+│   │   │   └── solution_template.json
+│   │   └── level_2/                            # Agentic N-2 search and mitigation
+│   │       ├── README.md                       # Full Level 2 benchmark specification
+│   │       ├── .env.example                    # Template for private model/API configuration
+│   │       ├── .gitignore                      # Keeps local .env files out of git
+│   │       └── prompts/
+│   │           └── steady_n2_llm_prompt.json   # Shared LLM tool-use prompt template
+│   └── dynamic/
+│       └── level1/                             # Dynamic model-quality review (DMView + PSS/E)
+│           ├── README.md                       # Full benchmark spec + install prerequisites
+│           ├── actionspace.json                # REECAU1 gain action contract + test suite
+│           ├── actioncost.json                 # Per-simulation cost and budget
+│           ├── baseline_summary.json           # Corrupted-model 0/8 reference + good solution
+│           ├── solution_template.json
+│           └── harness/                        # Runnable harness (DMView automation + agent loop)
 ├── scripts/                                    # Runnable entry points
 │   ├── build_case.py                           # Rebuild the stressed Level 1 scenario
 │   ├── convert_case.py                         # Export case39 to MATPOWER and PandaPower
@@ -134,6 +146,18 @@ See:
 
 ```text
 benchmarks/steady/level_2/README.md
+```
+
+### Dynamic Level 1
+
+`benchmarks/dynamic/level1/` evaluates dynamic model-quality review on a modified WECC solar PV model. The agent runs the DMView model-quality test suite (flat start, voltage/frequency steps, HVRT/LVRT, weak-grid SCR), diagnoses the failures, and repairs the model by adjusting only four allowed REECAU1 controller gains within a five-iteration budget.
+
+> **Note:** Unlike the steady-state benchmarks (open-source PyPSA), this dynamic benchmark requires **licensed/external tooling that you must install first**: **PSS/E 36.2** (Siemens, with valid license and Python bindings) and the **DMView 3.4** dynamic-model review tool (<https://sites.google.com/view/dmview/home>), running on Python 3.11. Set `DMVIEW_ROOT` and `PY311` in `benchmarks/dynamic/level1/harness/config.py` for your install.
+
+See:
+
+```text
+benchmarks/dynamic/level1/README.md
 ```
 
 ## Model and API Configuration

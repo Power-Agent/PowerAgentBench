@@ -1,0 +1,22 @@
+{
+  "task_id": "dynamic_level1_solar_dmq",
+  "gains": {"Kqp": 10.0, "Kqi": 50.0, "Kvp": 10.0, "Kvi": 50.0},
+  "suite_status": "completed",
+  "n_pass": 0,
+  "n_fail": 8,
+  "overall_pass": false,
+  "tests": {
+    "Test01_FS":      {"status": "fail", "metrics": {"drift_P_pu": 1.8,   "drift_Q_pu": 0.8202}, "thresholds": {"drift_P_pu": 0.05, "drift_Q_pu": 0.05}, "notes": "model does not hold steady output with no disturbance"},
+    "Test02_VOLTDOWN":{"status": "fail", "metrics": {"pp_Q_pu": 0.0, "pp_P_pu": 0.0, "P_end_frac": 0.0145}, "thresholds": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85}, "notes": "active power did not recover after the event"},
+    "Test03_VOLTUP":  {"status": "fail", "metrics": {"pp_Q_pu": 1.4348, "pp_P_pu": 0.1319, "P_end_frac": 0.0126}, "thresholds": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85}, "notes": "sustained reactive/active oscillation; active power did not recover"},
+    "Test04_FRQDOWN": {"status": "fail", "metrics": {"pp_P_pu": 0.0, "pp_Q_pu": 0.0, "P_end_frac": 0.0}, "thresholds": {"pp_P_pu": 0.1, "pp_Q_pu": 0.1, "collapse_frac": 0.5}, "notes": "active-power collapse during frequency disturbance"},
+    "Test05_FRQUP":   {"status": "fail", "metrics": {"pp_P_pu": 0.0, "pp_Q_pu": 1.2324, "P_end_frac": 0.0}, "thresholds": {"pp_P_pu": 0.1, "pp_Q_pu": 0.1, "collapse_frac": 0.5}, "notes": "active-power collapse; sustained oscillation"},
+    "Test06_HVRT":    {"status": "fail", "metrics": {"pp_Q_pu": 0.0, "pp_P_pu": 0.0, "P_end_frac": 0.0123}, "thresholds": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85}, "notes": "active power did not recover after the event"},
+    "Test07_LVRT":    {"status": "fail", "metrics": {"pp_Q_pu": 1.5567, "pp_P_pu": 0.1294, "P_end_frac": 0.0159, "cessation_s": 18.72}, "thresholds": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85, "cessation_s": 3.0}, "notes": "sustained oscillation; momentary cessation 18.72 s exceeds 3.0 s"},
+    "Test08_SCR2":    {"status": "fail", "metrics": {"levels": {"5.0": "unstable", "3.0": "unstable", "1.5": "unstable", "1.2": "unstable"}, "graded_levels": [5.0, 3.0, 1.5], "t_end_s": 20.0}, "thresholds": {"pp_V_pu": 0.05, "pp_Q_pu": 0.1}, "notes": "unstable at graded SCR levels 5.0, 3.0, 1.5; level 1.2 is informational only"}
+  },
+  "reference_solution": {
+    "gains": {"Kqp": 1.0, "Kqi": 5.0, "Kvp": 1.0, "Kvi": 5.0},
+    "outcome": "All 8 tests pass."
+  }
+}

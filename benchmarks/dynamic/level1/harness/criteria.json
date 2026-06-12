@@ -1,0 +1,41 @@
+{
+  "_comment": "Pass/fail criteria for the DMQ benchmark evaluator. Channel values from DMView .out files are already in per-unit (pu_base=1.0). Thresholds calibrated 2026-06-10 against the corrupted baseline (10,50,10,50) and the known-good gains (1,5,1,5): see results/baseline/.",
+  "pu_base": 1.0,
+  "settle_s": 1.0,
+  "tail_s": 2.0,
+  "fault_v_pu": 0.5,
+  "cessation_frac": 0.05,
+  "channel_patterns": {
+    "P": "POWR 91003",
+    "Q": "VARS 91003",
+    "V": "VOLT 1000 ",
+    "F": "FREQ 1000 ",
+    "SCR": "^29:SCR$"
+  },
+  "outfile_patterns": {
+    "Test01_FS": "TEST01_FS.*\\.out$",
+    "Test02_VOLTDOWN": "TEST02_VOLTDOWN.*\\.out$",
+    "Test03_VOLTUP": "TEST03_VOLTUP.*\\.out$",
+    "Test04_FRQDOWN": "TEST04_FRQDOWN.*\\.out$",
+    "Test05_FRQUP": "TEST05_FRQUP.*\\.out$",
+    "Test06_HVRT": "TEST06_HVRT.*\\.out$",
+    "Test07_LVRT": "TEST07_LVRT.*\\.out$",
+    "Test08_SCR2": "TEST08_SCR2.*\\.out$"
+  },
+  "scr2": {
+    "tail_s": 2.0,
+    "fault_margin_s": 0.15,
+    "graded_levels": [5.0, 3.0, 1.5],
+    "expected_end_s": 20.0
+  },
+  "tests": {
+    "Test01_FS": {"drift_P_pu": 0.05, "drift_Q_pu": 0.05},
+    "Test02_VOLTDOWN": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85},
+    "Test03_VOLTUP": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85},
+    "Test04_FRQDOWN": {"pp_P_pu": 0.1, "pp_Q_pu": 0.1, "collapse_frac": 0.5},
+    "Test05_FRQUP": {"pp_P_pu": 0.1, "pp_Q_pu": 0.1, "collapse_frac": 0.5},
+    "Test06_HVRT": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85},
+    "Test07_LVRT": {"pp_Q_pu": 0.1, "pp_P_pu": 0.1, "p_recovery_frac": 0.85, "cessation_s": 3.0},
+    "Test08_SCR2": {"pp_V_pu": 0.05, "pp_Q_pu": 0.1}
+  }
+}
