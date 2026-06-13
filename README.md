@@ -1,8 +1,8 @@
 # PowerAgentBench
 
-PowerAgentBench is a benchmark suite for evaluating AI agents on power-system operation and planning tasks. The current release focuses on steady-state studies and includes conventional scripted baselines, Ollama-hosted LLM agents, and OpenAI/ChatGPT-style LLM agents.
+PowerAgentBench is a benchmark suite for evaluating AI agents on power-system operation and planning tasks. The current release includes steady-state and dynamic-study tracks, covering contingency analysis, dynamic model-quality review, dynamic security-risk screening, scripted baselines, and LLM/tool-agent evaluation.
 
-The benchmark is built around a public/hidden split. Agents see public case data, action spaces, and tool APIs. A hidden evaluator recomputes physical validity and returns discovery, evidence, safety, mitigation, efficiency, workflow, and reliability metrics.
+The benchmark is built around a public/hidden split. Agents see public case data, scenarios, action spaces, and tool APIs. Hidden evaluators recompute steady-state or dynamic validity and return discovery, evidence, safety, mitigation, efficiency, workflow, and reliability metrics.
 
 ## Repository Structure
 
