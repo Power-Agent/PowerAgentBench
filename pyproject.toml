@@ -7,7 +7,8 @@ name = "poweragentbench"
 version = "0.1.0"
 requires-python = ">=3.10"
 dependencies = [
-    "pypsa>=1.0",
+    "pypsa>=1.0; python_version >= '3.11'",
+    "pypsa<1.0; python_version < '3.11'",
     "pandapower",
     "numpy",
     "pandas",
