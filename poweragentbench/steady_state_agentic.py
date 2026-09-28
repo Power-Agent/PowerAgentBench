@@ -91,6 +91,16 @@ class PFResult:
 
 @dataclass
 class AgentOutput:
+    """Completed agent trajectory and evaluator-visible output.
+
+    ``validated`` preserves the order of first completed unique pre-action
+    validation evaluations. For tool agents this follows validation-call order
+    and candidate order within each call after invalid candidates and
+    duplicates are filtered and the budget is applied. For scripted agents it
+    follows selected-candidate order, including sampled order for Random and
+    combined selection order for Hybrid.
+    """
+
     name: str
     validated: Dict[Contingency, float]
     reported: List[Contingency]
@@ -965,6 +975,78 @@ class SteadyN2ToolServer:
         return {"error": f"Unknown tool '{tool}'.", "allowed_tools": ["case_summary", "rank_base_loading", "rank_lodf", "validate", "redispatch", "submit"]}, False, None
 
 
+
+def compute_anytime_risk_metrics(
+    output: AgentOutput,
+    oracle_values: Dict[Contingency, float],
+    dangerous: set[Contingency],
+) -> Dict[str, float]:
+    """Measure hidden severity discovered along the pre-action validation trajectory.
+
+    The trajectory is the first completed unique pre-action validation
+    evaluations in output.validated insertion order. Hidden oracle severity
+    values are used only by the evaluator. Percentage checkpoints are sampled
+    at exact fractional budget positions on the linearly interpolated
+    discovery curve; they are not rounded validation counts.
+    """
+    budget = int(output.validation_budget)
+
+    zero_result = {
+        "anytime_risk_auc": 0.0,
+        "anytime_risk_at_25": 0.0,
+        "anytime_risk_at_50": 0.0,
+        "anytime_risk_at_75": 0.0,
+        "anytime_risk_at_100": 0.0,
+    }
+    if budget <= 0 or not dangerous:
+        return zero_result
+
+    total_risk = sum(
+        max(0.0, float(oracle_values.get(c, 0.0)))
+        for c in dangerous
+    )
+    if total_risk <= 1e-12:
+        return zero_result
+
+    validation_order: List[Contingency] = list(output.validated.keys())
+    points: List[Tuple[int, float]] = [(0, 0.0)]
+    discovered_risk = 0.0
+
+    for i, contingency in enumerate(validation_order[:budget], start=1):
+        if contingency in dangerous:
+            discovered_risk += max(0.0, float(oracle_values.get(contingency, 0.0)))
+        risk_fraction = min(1.0, discovered_risk / total_risk)
+        points.append((i, risk_fraction))
+
+    # Hold the final discovery level over any unused validation budget.
+    if points[-1][0] < budget:
+        points.append((budget, points[-1][1]))
+
+    def risk_at(target: float) -> float:
+        if target <= 0.0:
+            return 0.0
+        for i in range(1, len(points)):
+            x0, y0 = points[i - 1]
+            x1, y1 = points[i]
+            if target <= x1:
+                if x1 == x0:
+                    return float(y1)
+                alpha = (target - x0) / float(x1 - x0)
+                return float(y0 + alpha * (y1 - y0))
+        return float(points[-1][1])
+
+    auc = 0.0
+    for (x0, y0), (x1, y1) in zip(points[:-1], points[1:]):
+        auc += 0.5 * (y0 + y1) * (x1 - x0)
+    auc /= float(budget)
+
+    return {
+        "anytime_risk_auc": float(auc),
+        "anytime_risk_at_25": risk_at(0.25 * budget),
+        "anytime_risk_at_50": risk_at(0.50 * budget),
+        "anytime_risk_at_75": risk_at(0.75 * budget),
+        "anytime_risk_at_100": risk_at(float(budget)),
+    }
 def score_agent(
     original_case: GridCase,
     output: AgentOutput,
@@ -1039,6 +1121,12 @@ def score_agent(
     unvalidated_claims = reported - found
     unvalidated_claim_rate = len(unvalidated_claims) / max(1, len(reported))
 
+    anytime_metrics = compute_anytime_risk_metrics(
+        output=output,
+        oracle_values=oracle_values,
+        dangerous=dangerous,
+    )
+
     eval_case = output.mitigated_case if output.mitigated_case is not None else original_case
 
     pre_top_values = [dc_power_flow(original_case, c).severity for c in oracle_top_list]
@@ -1094,6 +1182,11 @@ def score_agent(
             if output.validation_budget
             else 0.0
         ),
+
+        # Severity-weighted anytime risk discovery.
+
+        # Severity-weighted anytime risk discovery.
+        **anytime_metrics,
     }
 
 

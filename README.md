@@ -45,6 +45,7 @@ PowerAgentBench/
 │           ├── baseline_summary.json           # Corrupted-model 0/8 reference + good solution
 │           ├── solution_template.json
 │           └── harness/                        # Runnable harness (DMView automation + agent loop)
+├── tests/                                     # Top-level Level 2/shared-library regression tests
 ├── scripts/                                    # Runnable entry points
 │   ├── build_case.py                           # Rebuild the stressed Level 1 scenario
 │   ├── convert_case.py                         # Export case39 to MATPOWER and PandaPower
@@ -274,6 +275,7 @@ PowerAgentBench returns per-case and aggregate metrics, including:
 - duplicate validation requests,
 - explicit submission and auto-finalization indicators,
 - validation budget use,
+- severity-weighted anytime risk discovery for Level 2, including AUC and validation-budget checkpoints ([details](benchmarks/steady/level_2/README.md#severity-weighted-anytime-risk-discovery)),
 - completed and requested case counts.
 
 These metrics distinguish answer quality, tool evidence, search quality, mitigation quality, safety behavior, and workflow compliance.
@@ -313,6 +315,7 @@ If an OpenAI run stops early after a retry failure, partial outputs are preserve
 
 ## Development Notes
 
+- Run the top-level Level 2/shared-library regression tests from the repository root with `python -m unittest discover -s tests -v`. The self-contained Level 3 suite remains separate.
 - Use Level 1 to test basic steady-state action submission and physical validation.
 - Use Level 2 to test agentic behavior, tool use, validation-budget allocation, evidence-backed reporting, and LLM workflows.
 - Keep hidden oracle quantities, private endpoint URLs, and API keys outside the public repository.

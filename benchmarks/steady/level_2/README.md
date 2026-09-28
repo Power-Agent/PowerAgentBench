@@ -153,9 +153,38 @@ The runner returns per-case and aggregate CSV files with:
 - `duplicate_validation_requests`,
 - `submitted_explicitly`,
 - `auto_finalized`,
-- `validation_budget_used`.
+- `validation_budget_used`,
+- `anytime_risk_auc`,
+- `anytime_risk_at_25`,
+- `anytime_risk_at_50`,
+- `anytime_risk_at_75`,
+- `anytime_risk_at_100`.
 
 These fields separate search quality, evidence quality, tool compliance, budget use, mitigation, and workflow completion.
+
+### Severity-Weighted Anytime Risk Discovery
+
+The evaluator reports severity-weighted anytime risk discovery for Level 2 through:
+
+- `anytime_risk_auc`,
+- `anytime_risk_at_25`,
+- `anytime_risk_at_50`,
+- `anytime_risk_at_75`,
+- `anytime_risk_at_100`.
+
+Dangerous contingencies are selected using the explicit severity threshold when one is supplied; otherwise the evaluator uses the configured empirical severity quantile (`danger_quantile`, default `0.95`). Values at or above the cutoff are included.
+
+Discovery is based on the first completed unique pre-action validation evaluations in their recorded order. For batched validation, candidate order within each batch matters. Duplicate requests do not create additional trajectory positions, and post-action validations do not contribute to this trajectory. A validated contingency contributes here whether or not it appears in `reported`; this is distinct from the evidence-backed submission metrics.
+
+Each discovered dangerous contingency contributes its non-negative hidden oracle severity. The risk-discovery fraction is the accumulated discovered severity divided by the total non-negative hidden severity of the dangerous set. Hidden oracle values are used only by the evaluator and are never exposed to the agent.
+
+`anytime_risk_auc` is the normalized trapezoidal area under the discovery curve, normalized by the allocated validation budget. The horizontal axis measures validation-count progress, not elapsed time or LLM turns. Percentage checkpoints are evaluated at the exact fractional budget positions on the linearly interpolated curve; they are not rounded counts of completed validations. Thus, for example, a 75% checkpoint at budget 10 is evaluated at position 7.5.
+
+If the agent consumes fewer validations than the allocated budget, its final discovery level is held constant over the unused budget. A non-positive budget or total dangerous severity at or below `1e-12` produces zero-valued metrics.
+
+The per-case metrics complement final discovery, evidence, safety, mitigation, and action-cost metrics rather than replacing them. In particular, `anytime_risk_at_100` is not generally the complement of `severity_weighted_false_negative`, because anytime discovery is based on validated contingencies while the evidence-backed metric requires reported contingencies supported by validation.
+
+For aggregate outputs, distinguish the per-case metric names above from their corresponding `_mean` and `_std` columns. The metric catalogue is descriptive rather than an exhaustive listing of every field returned by `score_agent()`.
 
 ## Evaluation Regimes
 
