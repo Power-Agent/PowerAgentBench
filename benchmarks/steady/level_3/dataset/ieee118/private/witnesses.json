@@ -26853,8 +26853,8 @@
   {
     "maneuvers": [
       {
-        "gen_id": 1,
-        "new_vm_pu": 0.988,
+        "gen_id": 27,
+        "new_vm_pu": 1.015,
         "type": "GEN_V_SETPOINT"
       }
     ],
@@ -26862,7 +26862,7 @@
     "search_policy_version": "deterministic-bfs-beam-qv-v3",
     "state_hashes": [
       "66f2285f65b6399739a74fb51fb09b6f1b919a4bbf322f1302c3e72edf7adc95",
-      "0a7063a799019b260a4b95fa1b7574d2100cf8e53f4b33b19401d841ea13ad5b"
+      "bbe5c8b5cae723543d526a93f0cc05e507157c206426dc9acf0d69a8e31fcb99"
     ],
     "terminal_pf": {
       "converged": true,
@@ -26874,7 +26874,7 @@
         "failure_reasons": [
           {
             "code": "HARD_VOLTAGE_ENVELOPE",
-            "detail": "bus voltage range [0.736715747134, 1.05] outside [0.9, 1.1] pu",
+            "detail": "bus voltage range [0.737490976544, 1.05] outside [0.9, 1.1] pu",
             "element_id": null
           }
         ],
@@ -26883,91 +26883,91 @@
         "generator_q_status": [
           {
             "gen_id": 0,
-            "lower_headroom_mvar": 5.360567871233329,
+            "lower_headroom_mvar": 1.8513829050157682,
             "max_q_mvar": 15.0,
             "min_q_mvar": -5.0,
-            "near_limit": false,
+            "near_limit": true,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 0.3605678712333287,
+            "q_mvar": -3.148617094984232,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 14.639432128766671
+            "upper_headroom_mvar": 18.148617094984232
           },
           {
             "gen_id": 1,
-            "lower_headroom_mvar": 229.6034452339075,
+            "lower_headroom_mvar": 284.1100238017639,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -70.39655476609249,
+            "q_mvar": -15.889976198236127,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 370.3965547660925
+            "upper_headroom_mvar": 315.8899761982361
           },
           {
             "gen_id": 2,
-            "lower_headroom_mvar": 40.8057911838221,
+            "lower_headroom_mvar": 28.94825248862871,
             "max_q_mvar": 50.0,
             "min_q_mvar": -13.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 27.8057911838221,
+            "q_mvar": 15.948252488628711,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 22.1942088161779
+            "upper_headroom_mvar": 34.05174751137129
           },
           {
             "gen_id": 3,
-            "lower_headroom_mvar": 429.2937782485922,
+            "lower_headroom_mvar": 404.6155792491274,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 129.29377824859222,
+            "q_mvar": 104.61557924912739,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 170.70622175140778
+            "upper_headroom_mvar": 195.3844207508726
           },
           {
             "gen_id": 4,
-            "lower_headroom_mvar": 117.28965638261954,
+            "lower_headroom_mvar": 117.28965638261994,
             "max_q_mvar": 200.0,
             "min_q_mvar": -147.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -29.71034361738046,
+            "q_mvar": -29.71034361738006,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 229.71034361738046
+            "upper_headroom_mvar": 229.71034361738006
           },
           {
             "gen_id": 5,
-            "lower_headroom_mvar": 137.50391218454178,
+            "lower_headroom_mvar": 121.84093525215442,
             "max_q_mvar": 120.0,
             "min_q_mvar": -35.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 102.50391218454178,
+            "q_mvar": 86.84093525215442,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 17.496087815458225
+            "upper_headroom_mvar": 33.15906474784558
           },
           {
             "gen_id": 6,
-            "lower_headroom_mvar": 17.847201166309272,
+            "lower_headroom_mvar": 16.977882516538347,
             "max_q_mvar": 30.0,
             "min_q_mvar": -10.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 7.847201166309272,
+            "q_mvar": 6.977882516538347,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 22.152798833690728
+            "upper_headroom_mvar": 23.022117483461653
           },
           {
             "gen_id": 7,
-            "lower_headroom_mvar": 43.62672651009109,
+            "lower_headroom_mvar": 43.63465005744729,
             "max_q_mvar": 50.0,
             "min_q_mvar": -16.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 27.62672651009109,
+            "q_mvar": 27.63465005744729,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 22.37327348990891
+            "upper_headroom_mvar": 22.36534994255271
           },
           {
             "gen_id": 8,
@@ -26982,58 +26982,58 @@
           },
           {
             "gen_id": 9,
-            "lower_headroom_mvar": 307.22657465919946,
+            "lower_headroom_mvar": 307.9527950780775,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 7.226574659199457,
+            "q_mvar": 7.952795078077486,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 292.77342534080054
+            "upper_headroom_mvar": 292.0472049219225
           },
           {
             "gen_id": 10,
-            "lower_headroom_mvar": 97.13206764405216,
+            "lower_headroom_mvar": 97.11613055320339,
             "max_q_mvar": 140.0,
             "min_q_mvar": -47.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 50.13206764405216,
+            "q_mvar": 50.11613055320339,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 89.86793235594784
+            "upper_headroom_mvar": 89.88386944679661
           },
           {
             "gen_id": 11,
-            "lower_headroom_mvar": 1020.487788663409,
+            "lower_headroom_mvar": 1020.466182409278,
             "max_q_mvar": 1000.0,
             "min_q_mvar": -1000.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 20.487788663408992,
+            "q_mvar": 20.466182409277963,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 979.512211336591
+            "upper_headroom_mvar": 979.533817590722
           },
           {
             "gen_id": 12,
-            "lower_headroom_mvar": 305.61709029911657,
+            "lower_headroom_mvar": 305.6034284757834,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 5.617090299116569,
+            "q_mvar": 5.603428475783403,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 294.38290970088343
+            "upper_headroom_mvar": 294.3965715242166
           },
           {
             "gen_id": 13,
-            "lower_headroom_mvar": 331.5820607678841,
+            "lower_headroom_mvar": 331.58398454607976,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 31.582060767884116,
+            "q_mvar": 31.583984546079762,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 268.4179392321159
+            "upper_headroom_mvar": 268.41601545392024
           },
           {
             "gen_id": 14,
@@ -27059,124 +27059,124 @@
           },
           {
             "gen_id": 16,
-            "lower_headroom_mvar": 7.49979392062458,
+            "lower_headroom_mvar": 7.503976381687043,
             "max_q_mvar": 24.0,
             "min_q_mvar": -8.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -0.5002060793754204,
+            "q_mvar": -0.4960236183129574,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 24.50020607937542
+            "upper_headroom_mvar": 24.496023618312957
           },
           {
             "gen_id": 17,
-            "lower_headroom_mvar": 329.3096972646947,
+            "lower_headroom_mvar": 329.31734774078893,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 29.309697264694705,
+            "q_mvar": 29.317347740788932,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 270.6903027353053
+            "upper_headroom_mvar": 270.68265225921107
           },
           {
             "gen_id": 18,
-            "lower_headroom_mvar": 337.9091780971322,
+            "lower_headroom_mvar": 337.9024858467397,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 37.90917809713221,
+            "q_mvar": 37.902485846739694,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 262.0908219028678
+            "upper_headroom_mvar": 262.0975141532603
           },
           {
             "gen_id": 19,
-            "lower_headroom_mvar": 93.1692528999001,
+            "lower_headroom_mvar": 93.1639861057424,
             "max_q_mvar": 100.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -6.830747100099899,
+            "q_mvar": -6.836013894257604,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 106.8307471000999
+            "upper_headroom_mvar": 106.8360138942576
           },
           {
             "gen_id": 20,
-            "lower_headroom_mvar": 183.30852965137157,
+            "lower_headroom_mvar": 183.28877572587396,
             "max_q_mvar": 210.0,
             "min_q_mvar": -85.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 98.30852965137157,
+            "q_mvar": 98.28877572587396,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 111.69147034862843
+            "upper_headroom_mvar": 111.71122427412604
           },
           {
             "gen_id": 21,
-            "lower_headroom_mvar": 300.2798529478665,
+            "lower_headroom_mvar": 300.28029779969705,
             "max_q_mvar": 300.0,
             "min_q_mvar": -300.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 0.27985294786651593,
+            "q_mvar": 0.2802977996970526,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 299.7201470521335
+            "upper_headroom_mvar": 299.71970220030295
           },
           {
             "gen_id": 22,
-            "lower_headroom_mvar": 12.63772110450467,
+            "lower_headroom_mvar": 12.63773943349172,
             "max_q_mvar": 23.0,
             "min_q_mvar": -8.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 4.637721104504671,
+            "q_mvar": 4.637739433491721,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 18.36227889549533
+            "upper_headroom_mvar": 18.36226056650828
           },
           {
             "gen_id": 23,
-            "lower_headroom_mvar": 4.998934460115802,
+            "lower_headroom_mvar": 4.998996898805277,
             "max_q_mvar": 15.0,
             "min_q_mvar": -8.0,
             "near_limit": true,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -3.0010655398841983,
+            "q_mvar": -3.0010031011947227,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 18.0010655398842
+            "upper_headroom_mvar": 18.001003101194723
           },
           {
             "gen_id": 24,
-            "lower_headroom_mvar": 127.89585071606496,
+            "lower_headroom_mvar": 127.89476001325905,
             "max_q_mvar": 180.0,
             "min_q_mvar": -60.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 67.89585071606496,
+            "q_mvar": 67.89476001325905,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 112.10414928393504
+            "upper_headroom_mvar": 112.10523998674095
           },
           {
             "gen_id": 25,
-            "lower_headroom_mvar": 53.49944796273613,
+            "lower_headroom_mvar": 53.497118850753225,
             "max_q_mvar": 300.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -46.50055203726387,
+            "q_mvar": -46.502881149246775,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 346.5005520372639
+            "upper_headroom_mvar": 346.5028811492468
           },
           {
             "gen_id": 26,
-            "lower_headroom_mvar": 21.186417505052162,
+            "lower_headroom_mvar": 21.186544151786933,
             "max_q_mvar": 20.0,
             "min_q_mvar": -20.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 1.1864175050521624,
+            "q_mvar": 1.1865441517869328,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 18.813582494947838
+            "upper_headroom_mvar": 18.813455848213067
           },
           {
             "gen_id": 27,
@@ -27191,47 +27191,47 @@
           },
           {
             "gen_id": 28,
-            "lower_headroom_mvar": 65.94553902901708,
+            "lower_headroom_mvar": 65.94300344091698,
             "max_q_mvar": 200.0,
             "min_q_mvar": -67.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -1.054460970982916,
+            "q_mvar": -1.056996559083018,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 201.05446097098292
+            "upper_headroom_mvar": 201.05699655908302
           },
           {
             "gen_id": 29,
-            "lower_headroom_mvar": 42.0,
+            "lower_headroom_mvar": 31.94985196449798,
             "max_q_mvar": 32.0,
             "min_q_mvar": -10.0,
-            "near_limit": true,
+            "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 32.0,
-            "status": "Q_LIMITED_UPPER",
-            "upper_headroom_mvar": 0.0
+            "q_mvar": 21.94985196449798,
+            "status": "PV_CONTROLLABLE",
+            "upper_headroom_mvar": 10.05014803550202
           },
           {
             "gen_id": 30,
-            "lower_headroom_mvar": 91.13255331713401,
+            "lower_headroom_mvar": 92.0446071400052,
             "max_q_mvar": 100.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -8.867446682865989,
+            "q_mvar": -7.955392859994802,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 108.86744668286599
+            "upper_headroom_mvar": 107.9553928599948
           },
           {
             "gen_id": 31,
-            "lower_headroom_mvar": 106.40258779053875,
+            "lower_headroom_mvar": 110.04315827538964,
             "max_q_mvar": 100.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 6.402587790538746,
+            "q_mvar": 10.043158275389644,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 93.59741220946125
+            "upper_headroom_mvar": 89.95684172461036
           },
           {
             "gen_id": 32,
@@ -27290,14 +27290,14 @@
           },
           {
             "gen_id": 37,
-            "lower_headroom_mvar": 195.00551475631613,
+            "lower_headroom_mvar": 194.7400928728215,
             "max_q_mvar": 1000.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 95.00551475631613,
+            "q_mvar": 94.74009287282149,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 904.9944852436838
+            "upper_headroom_mvar": 905.2599071271785
           },
           {
             "gen_id": 38,
@@ -27400,14 +27400,14 @@
           },
           {
             "gen_id": 47,
-            "lower_headroom_mvar": 221.96276869678172,
+            "lower_headroom_mvar": 221.78578904061376,
             "max_q_mvar": 200.0,
             "min_q_mvar": -200.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 21.962768696781723,
+            "q_mvar": 21.785789040613764,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 178.03723130321828
+            "upper_headroom_mvar": 178.21421095938624
           },
           {
             "gen_id": 48,
@@ -27422,47 +27422,47 @@
           },
           {
             "gen_id": 49,
-            "lower_headroom_mvar": 97.14621010586505,
+            "lower_headroom_mvar": 97.06983540642908,
             "max_q_mvar": 1000.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": -2.853789894134948,
+            "q_mvar": -2.9301645935709217,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 1002.8537898941349
+            "upper_headroom_mvar": 1002.9301645935709
           },
           {
             "gen_id": 50,
-            "lower_headroom_mvar": 143.11885794282355,
+            "lower_headroom_mvar": 143.0262458137593,
             "max_q_mvar": 1000.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 43.11885794282355,
+            "q_mvar": 43.02624581375929,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 956.8811420571765
+            "upper_headroom_mvar": 956.9737541862407
           },
           {
             "gen_id": 51,
-            "lower_headroom_mvar": 108.56798996156715,
+            "lower_headroom_mvar": 108.5835544387685,
             "max_q_mvar": 200.0,
             "min_q_mvar": -100.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 8.56798996156715,
+            "q_mvar": 8.583554438768502,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 191.43201003843285
+            "upper_headroom_mvar": 191.4164455612315
           },
           {
             "gen_id": 52,
-            "lower_headroom_mvar": 1320.7102460457527,
+            "lower_headroom_mvar": 1320.6799570307146,
             "max_q_mvar": 1000.0,
             "min_q_mvar": -1000.0,
             "near_limit": false,
             "policy_version": "directional-q-limit-v1",
-            "q_mvar": 320.7102460457527,
+            "q_mvar": 320.6799570307146,
             "status": "PV_CONTROLLABLE",
-            "upper_headroom_mvar": 679.2897539542473
+            "upper_headroom_mvar": 679.3200429692854
           }
         ],
         "generator_q_within_limits": true,
@@ -27473,7 +27473,6 @@
           14,
           15,
           27,
-          29,
           32,
           33,
           34,
@@ -27493,20 +27492,19 @@
         "slack_results": [
           {
             "ext_grid_id": 0,
-            "p_mw": 780.8818585446998,
+            "p_mw": 780.3534273527885,
             "p_within_limits": true,
-            "q_mvar": -6.894049956363409,
+            "q_mvar": -2.874678523876897,
             "q_within_limits": true
           }
         ],
         "voltage": {
           "hard_envelope_ok": false,
-          "high_bus_ids": [
-            24
-          ],
+          "high_bus_ids": [],
           "low_bus_ids": [
             52,
             73,
+            74,
             75,
             76,
             77,
@@ -27528,99 +27526,99 @@
             105,
             117
           ],
-          "max_vm_pu": 1.0500000000000003,
-          "min_vm_pu": 0.7367157471338502,
+          "max_vm_pu": 1.05,
+          "min_vm_pu": 0.7374909765437455,
           "runtime_quality_ok": false
         }
       },
       "generator_q_status": [
         {
           "gen_id": 0,
-          "lower_headroom_mvar": 5.360567871233329,
+          "lower_headroom_mvar": 1.8513829050157682,
           "max_q_mvar": 15.0,
           "min_q_mvar": -5.0,
-          "near_limit": false,
+          "near_limit": true,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 0.3605678712333287,
+          "q_mvar": -3.148617094984232,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 14.639432128766671
+          "upper_headroom_mvar": 18.148617094984232
         },
         {
           "gen_id": 1,
-          "lower_headroom_mvar": 229.6034452339075,
+          "lower_headroom_mvar": 284.1100238017639,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -70.39655476609249,
+          "q_mvar": -15.889976198236127,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 370.3965547660925
+          "upper_headroom_mvar": 315.8899761982361
         },
         {
           "gen_id": 2,
-          "lower_headroom_mvar": 40.8057911838221,
+          "lower_headroom_mvar": 28.94825248862871,
           "max_q_mvar": 50.0,
           "min_q_mvar": -13.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 27.8057911838221,
+          "q_mvar": 15.948252488628711,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 22.1942088161779
+          "upper_headroom_mvar": 34.05174751137129
         },
         {
           "gen_id": 3,
-          "lower_headroom_mvar": 429.2937782485922,
+          "lower_headroom_mvar": 404.6155792491274,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 129.29377824859222,
+          "q_mvar": 104.61557924912739,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 170.70622175140778
+          "upper_headroom_mvar": 195.3844207508726
         },
         {
           "gen_id": 4,
-          "lower_headroom_mvar": 117.28965638261954,
+          "lower_headroom_mvar": 117.28965638261994,
           "max_q_mvar": 200.0,
           "min_q_mvar": -147.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -29.71034361738046,
+          "q_mvar": -29.71034361738006,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 229.71034361738046
+          "upper_headroom_mvar": 229.71034361738006
         },
         {
           "gen_id": 5,
-          "lower_headroom_mvar": 137.50391218454178,
+          "lower_headroom_mvar": 121.84093525215442,
           "max_q_mvar": 120.0,
           "min_q_mvar": -35.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 102.50391218454178,
+          "q_mvar": 86.84093525215442,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 17.496087815458225
+          "upper_headroom_mvar": 33.15906474784558
         },
         {
           "gen_id": 6,
-          "lower_headroom_mvar": 17.847201166309272,
+          "lower_headroom_mvar": 16.977882516538347,
           "max_q_mvar": 30.0,
           "min_q_mvar": -10.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 7.847201166309272,
+          "q_mvar": 6.977882516538347,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 22.152798833690728
+          "upper_headroom_mvar": 23.022117483461653
         },
         {
           "gen_id": 7,
-          "lower_headroom_mvar": 43.62672651009109,
+          "lower_headroom_mvar": 43.63465005744729,
           "max_q_mvar": 50.0,
           "min_q_mvar": -16.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 27.62672651009109,
+          "q_mvar": 27.63465005744729,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 22.37327348990891
+          "upper_headroom_mvar": 22.36534994255271
         },
         {
           "gen_id": 8,
@@ -27635,58 +27633,58 @@
         },
         {
           "gen_id": 9,
-          "lower_headroom_mvar": 307.22657465919946,
+          "lower_headroom_mvar": 307.9527950780775,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 7.226574659199457,
+          "q_mvar": 7.952795078077486,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 292.77342534080054
+          "upper_headroom_mvar": 292.0472049219225
         },
         {
           "gen_id": 10,
-          "lower_headroom_mvar": 97.13206764405216,
+          "lower_headroom_mvar": 97.11613055320339,
           "max_q_mvar": 140.0,
           "min_q_mvar": -47.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 50.13206764405216,
+          "q_mvar": 50.11613055320339,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 89.86793235594784
+          "upper_headroom_mvar": 89.88386944679661
         },
         {
           "gen_id": 11,
-          "lower_headroom_mvar": 1020.487788663409,
+          "lower_headroom_mvar": 1020.466182409278,
           "max_q_mvar": 1000.0,
           "min_q_mvar": -1000.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 20.487788663408992,
+          "q_mvar": 20.466182409277963,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 979.512211336591
+          "upper_headroom_mvar": 979.533817590722
         },
         {
           "gen_id": 12,
-          "lower_headroom_mvar": 305.61709029911657,
+          "lower_headroom_mvar": 305.6034284757834,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 5.617090299116569,
+          "q_mvar": 5.603428475783403,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 294.38290970088343
+          "upper_headroom_mvar": 294.3965715242166
         },
         {
           "gen_id": 13,
-          "lower_headroom_mvar": 331.5820607678841,
+          "lower_headroom_mvar": 331.58398454607976,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 31.582060767884116,
+          "q_mvar": 31.583984546079762,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 268.4179392321159
+          "upper_headroom_mvar": 268.41601545392024
         },
         {
           "gen_id": 14,
@@ -27712,124 +27710,124 @@
         },
         {
           "gen_id": 16,
-          "lower_headroom_mvar": 7.49979392062458,
+          "lower_headroom_mvar": 7.503976381687043,
           "max_q_mvar": 24.0,
           "min_q_mvar": -8.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -0.5002060793754204,
+          "q_mvar": -0.4960236183129574,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 24.50020607937542
+          "upper_headroom_mvar": 24.496023618312957
         },
         {
           "gen_id": 17,
-          "lower_headroom_mvar": 329.3096972646947,
+          "lower_headroom_mvar": 329.31734774078893,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 29.309697264694705,
+          "q_mvar": 29.317347740788932,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 270.6903027353053
+          "upper_headroom_mvar": 270.68265225921107
         },
         {
           "gen_id": 18,
-          "lower_headroom_mvar": 337.9091780971322,
+          "lower_headroom_mvar": 337.9024858467397,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 37.90917809713221,
+          "q_mvar": 37.902485846739694,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 262.0908219028678
+          "upper_headroom_mvar": 262.0975141532603
         },
         {
           "gen_id": 19,
-          "lower_headroom_mvar": 93.1692528999001,
+          "lower_headroom_mvar": 93.1639861057424,
           "max_q_mvar": 100.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -6.830747100099899,
+          "q_mvar": -6.836013894257604,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 106.8307471000999
+          "upper_headroom_mvar": 106.8360138942576
         },
         {
           "gen_id": 20,
-          "lower_headroom_mvar": 183.30852965137157,
+          "lower_headroom_mvar": 183.28877572587396,
           "max_q_mvar": 210.0,
           "min_q_mvar": -85.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 98.30852965137157,
+          "q_mvar": 98.28877572587396,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 111.69147034862843
+          "upper_headroom_mvar": 111.71122427412604
         },
         {
           "gen_id": 21,
-          "lower_headroom_mvar": 300.2798529478665,
+          "lower_headroom_mvar": 300.28029779969705,
           "max_q_mvar": 300.0,
           "min_q_mvar": -300.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 0.27985294786651593,
+          "q_mvar": 0.2802977996970526,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 299.7201470521335
+          "upper_headroom_mvar": 299.71970220030295
         },
         {
           "gen_id": 22,
-          "lower_headroom_mvar": 12.63772110450467,
+          "lower_headroom_mvar": 12.63773943349172,
           "max_q_mvar": 23.0,
           "min_q_mvar": -8.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 4.637721104504671,
+          "q_mvar": 4.637739433491721,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 18.36227889549533
+          "upper_headroom_mvar": 18.36226056650828
         },
         {
           "gen_id": 23,
-          "lower_headroom_mvar": 4.998934460115802,
+          "lower_headroom_mvar": 4.998996898805277,
           "max_q_mvar": 15.0,
           "min_q_mvar": -8.0,
           "near_limit": true,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -3.0010655398841983,
+          "q_mvar": -3.0010031011947227,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 18.0010655398842
+          "upper_headroom_mvar": 18.001003101194723
         },
         {
           "gen_id": 24,
-          "lower_headroom_mvar": 127.89585071606496,
+          "lower_headroom_mvar": 127.89476001325905,
           "max_q_mvar": 180.0,
           "min_q_mvar": -60.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 67.89585071606496,
+          "q_mvar": 67.89476001325905,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 112.10414928393504
+          "upper_headroom_mvar": 112.10523998674095
         },
         {
           "gen_id": 25,
-          "lower_headroom_mvar": 53.49944796273613,
+          "lower_headroom_mvar": 53.497118850753225,
           "max_q_mvar": 300.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -46.50055203726387,
+          "q_mvar": -46.502881149246775,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 346.5005520372639
+          "upper_headroom_mvar": 346.5028811492468
         },
         {
           "gen_id": 26,
-          "lower_headroom_mvar": 21.186417505052162,
+          "lower_headroom_mvar": 21.186544151786933,
           "max_q_mvar": 20.0,
           "min_q_mvar": -20.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 1.1864175050521624,
+          "q_mvar": 1.1865441517869328,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 18.813582494947838
+          "upper_headroom_mvar": 18.813455848213067
         },
         {
           "gen_id": 27,
@@ -27844,47 +27842,47 @@
         },
         {
           "gen_id": 28,
-          "lower_headroom_mvar": 65.94553902901708,
+          "lower_headroom_mvar": 65.94300344091698,
           "max_q_mvar": 200.0,
           "min_q_mvar": -67.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -1.054460970982916,
+          "q_mvar": -1.056996559083018,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 201.05446097098292
+          "upper_headroom_mvar": 201.05699655908302
         },
         {
           "gen_id": 29,
-          "lower_headroom_mvar": 42.0,
+          "lower_headroom_mvar": 31.94985196449798,
           "max_q_mvar": 32.0,
           "min_q_mvar": -10.0,
-          "near_limit": true,
+          "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 32.0,
-          "status": "Q_LIMITED_UPPER",
-          "upper_headroom_mvar": 0.0
+          "q_mvar": 21.94985196449798,
+          "status": "PV_CONTROLLABLE",
+          "upper_headroom_mvar": 10.05014803550202
         },
         {
           "gen_id": 30,
-          "lower_headroom_mvar": 91.13255331713401,
+          "lower_headroom_mvar": 92.0446071400052,
           "max_q_mvar": 100.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -8.867446682865989,
+          "q_mvar": -7.955392859994802,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 108.86744668286599
+          "upper_headroom_mvar": 107.9553928599948
         },
         {
           "gen_id": 31,
-          "lower_headroom_mvar": 106.40258779053875,
+          "lower_headroom_mvar": 110.04315827538964,
           "max_q_mvar": 100.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 6.402587790538746,
+          "q_mvar": 10.043158275389644,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 93.59741220946125
+          "upper_headroom_mvar": 89.95684172461036
         },
         {
           "gen_id": 32,
@@ -27943,14 +27941,14 @@
         },
         {
           "gen_id": 37,
-          "lower_headroom_mvar": 195.00551475631613,
+          "lower_headroom_mvar": 194.7400928728215,
           "max_q_mvar": 1000.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 95.00551475631613,
+          "q_mvar": 94.74009287282149,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 904.9944852436838
+          "upper_headroom_mvar": 905.2599071271785
         },
         {
           "gen_id": 38,
@@ -28053,14 +28051,14 @@
         },
         {
           "gen_id": 47,
-          "lower_headroom_mvar": 221.96276869678172,
+          "lower_headroom_mvar": 221.78578904061376,
           "max_q_mvar": 200.0,
           "min_q_mvar": -200.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 21.962768696781723,
+          "q_mvar": 21.785789040613764,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 178.03723130321828
+          "upper_headroom_mvar": 178.21421095938624
         },
         {
           "gen_id": 48,
@@ -28075,62 +28073,62 @@
         },
         {
           "gen_id": 49,
-          "lower_headroom_mvar": 97.14621010586505,
+          "lower_headroom_mvar": 97.06983540642908,
           "max_q_mvar": 1000.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": -2.853789894134948,
+          "q_mvar": -2.9301645935709217,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 1002.8537898941349
+          "upper_headroom_mvar": 1002.9301645935709
         },
         {
           "gen_id": 50,
-          "lower_headroom_mvar": 143.11885794282355,
+          "lower_headroom_mvar": 143.0262458137593,
           "max_q_mvar": 1000.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 43.11885794282355,
+          "q_mvar": 43.02624581375929,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 956.8811420571765
+          "upper_headroom_mvar": 956.9737541862407
         },
         {
           "gen_id": 51,
-          "lower_headroom_mvar": 108.56798996156715,
+          "lower_headroom_mvar": 108.5835544387685,
           "max_q_mvar": 200.0,
           "min_q_mvar": -100.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 8.56798996156715,
+          "q_mvar": 8.583554438768502,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 191.43201003843285
+          "upper_headroom_mvar": 191.4164455612315
         },
         {
           "gen_id": 52,
-          "lower_headroom_mvar": 1320.7102460457527,
+          "lower_headroom_mvar": 1320.6799570307146,
           "max_q_mvar": 1000.0,
           "min_q_mvar": -1000.0,
           "near_limit": false,
           "policy_version": "directional-q-limit-v1",
-          "q_mvar": 320.7102460457527,
+          "q_mvar": 320.6799570307146,
           "status": "PV_CONTROLLABLE",
-          "upper_headroom_mvar": 679.2897539542473
+          "upper_headroom_mvar": 679.3200429692854
         }
       ],
-      "iterations": 4,
+      "iterations": 5,
       "quality": null,
-      "recovery_used": true,
+      "recovery_used": false,
       "runtime_ms": 0.0,
       "slack": {
         "ext_grid_id": 0,
-        "p_mw": 780.8818585446998,
+        "p_mw": 780.3534273527885,
         "p_within_limits": true,
-        "q_mvar": -6.894049956363409,
+        "q_mvar": -2.874678523876897,
         "q_within_limits": true
       },
-      "solver_attempt_count": 2,
-      "tolerance_used": 1e-06,
+      "solver_attempt_count": 1,
+      "tolerance_used": 1e-08,
       "warnings": []
     }
   },

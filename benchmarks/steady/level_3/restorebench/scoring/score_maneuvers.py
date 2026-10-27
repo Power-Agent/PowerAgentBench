@@ -29,8 +29,6 @@ ROOT = Path(__file__).resolve().parents[2]
 MANEUVER_BUDGET = 10
 DEFAULT_DATA_DIR = ROOT / "dataset/ieee118/full"
 DEFAULT_DATASET_ROOT = ROOT / "dataset/ieee118"
-DEFAULT_EVALUATION_MANIFEST_PATH = DEFAULT_DATASET_ROOT / "evaluation_manifest.json"
-DEFAULT_SPLIT_PATH = DEFAULT_EVALUATION_MANIFEST_PATH
 DEFAULT_BATCH_OUT = ROOT / "results/manual_scoring"
 ACTION_ADAPTER: TypeAdapter[Any] = TypeAdapter(Action)
 SOLVER_SETTINGS = {"init": INIT, "max_iteration": MAX_ITERATION}
@@ -105,28 +103,37 @@ def score_batch(
     *,
     out_dir: Path = DEFAULT_BATCH_OUT,
     data_dir: Path = DEFAULT_DATA_DIR,
-    index_path: Path = DEFAULT_SPLIT_PATH,
+    index_path: Path | None = None,
 ) -> dict[str, Any]:
     attempts = _load_batch_attempts(batch_path)
     reports = [score_attempt(attempt, data_dir=data_dir) for attempt in attempts]
-    scenario_index = _load_scenario_index(index_path)
+    resolved_index_path = index_path or _dataset_paths(data_dir)[1]
+    scenario_index = _load_scenario_index(resolved_index_path)
     report = _aggregate_batch(reports, scenario_index)
     out_dir.mkdir(parents=True, exist_ok=True)
+    for index, attempt_report in enumerate(reports, start=1):
+        _write_json(out_dir / f"attempt_{index:04d}_score.json", attempt_report)
     _write_json(out_dir / "benchmark_report.json", report)
     return report
 
 
 def main(argv: Sequence[str] | None = None) -> None:
     args = _parse_args(argv)
+    data_dir, index_path = _dataset_paths(args.data_dir)
     if args.batch is not None:
         out_dir = args.out or DEFAULT_BATCH_OUT
-        report = score_batch(args.batch, out_dir=out_dir)
+        report = score_batch(
+            args.batch,
+            out_dir=out_dir,
+            data_dir=data_dir,
+            index_path=index_path,
+        )
         print(_json_dumps(report))
         return
 
     if args.input is None:
         raise SystemExit("one maneuver JSON file is required unless --batch is used")
-    report = score_attempt_file(args.input)
+    report = score_attempt_file(args.input, data_dir=data_dir)
     _write_json(_single_report_path(args.input, args.out), report)
     print(_json_dumps(report))
 
@@ -135,8 +142,21 @@ def _parse_args(argv: Sequence[str] | None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Score maneuver proposals against frozen benchmark scenarios.")
     parser.add_argument("input", nargs="?", type=Path, help="single maneuver JSON attempt")
     parser.add_argument("--batch", type=Path, help="directory, JSON file, or JSONL file of maneuver attempts")
+    parser.add_argument(
+        "--data-dir",
+        type=Path,
+        default=DEFAULT_DATASET_ROOT,
+        help="dataset root or its full/ scenario directory (default: dataset/ieee118)",
+    )
     parser.add_argument("--out", type=Path, help="output directory, or output JSON file for a single attempt")
     return parser.parse_args(argv)
+
+
+def _dataset_paths(data_dir: Path) -> tuple[Path, Path]:
+    """Resolve one corpus selection for both scenario loading and batch stratification."""
+    dataset_root = data_dir.parent if data_dir.name == "full" else data_dir
+    full_dir = data_dir if data_dir.name == "full" else data_dir / "full"
+    return full_dir, dataset_root / "evaluation_manifest.json"
 
 
 def _load_scenario(scenario_id: str, data_dir: Path) -> Any:

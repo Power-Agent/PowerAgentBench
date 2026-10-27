@@ -61,7 +61,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/ieee118-anthropic"
     },
@@ -126,7 +126,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/ieee118-bedrock"
     },
@@ -189,7 +189,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/ieee118-openai"
     },
@@ -207,7 +207,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/pegase89-bedrock"
     },
@@ -225,7 +225,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/pegase89-anthropic"
     },
@@ -241,7 +241,7 @@
         2,
         3
       ],
-      "repetitions": 1,
+      "repetitions": 3,
       "max_runtime_seconds": 2400,
       "results_dir": "results/pegase89-openai"
     }
