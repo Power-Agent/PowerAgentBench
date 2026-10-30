@@ -153,11 +153,16 @@ write it to JSON, and the scorer replays it against the frozen snapshot:
 ```bash
 uv run restorebench-score attempt.json
 uv run restorebench-score --batch attempts/ --out results/my_run
+uv run restorebench-score --batch attempts/ --data-dir dataset/pegase89 --out results/pegase89_run
 ```
 
+`--data-dir` accepts either a dataset root such as `dataset/pegase89` or its `full/` directory;
+batch scoring derives the matching `evaluation_manifest.json` from the same corpus.
+
 The report gives the status (`SUCCESS` / `BUDGET_EXHAUSTED`), the per-step outcome of every
-maneuver, the number of invalid actions, and the quality of the terminal state. A batch report
-additionally aggregates success rate and maneuver counts, broken down by dataset split.
+maneuver, the number of invalid actions, and the quality of the terminal state. Batch mode writes
+one `attempt_NNNN_score.json` per input plus `benchmark_report.json`, which aggregates success rate
+and maneuver counts broken down by dataset split.
 
 To sanity-check the setup, score a scenario's own witness from `private/witnesses.json` — it must
 come back `SUCCESS`.
@@ -188,7 +193,7 @@ is the only thing you have to supply:
 
 ```bash
 uv run restorebench-sweep --campaign ieee118-anthropic --dry-run   # print the queue, spend nothing
-uv run restorebench-sweep --campaign ieee118-anthropic             # 46 scenarios × 9 cells
+uv run restorebench-sweep --campaign ieee118-anthropic             # 46 scenarios × 27 cells
 uv run restorebench-sweep --campaign ieee118-bedrock
 uv run restorebench-sweep --campaign ieee118-openai
 uv run restorebench-sweep --campaign pegase89-anthropic
@@ -196,14 +201,16 @@ uv run restorebench-sweep --campaign pegase89-bedrock
 uv run restorebench-sweep --campaign pegase89-openai
 ```
 
+Every campaign runs three repetitions (`rep0`, `rep1`, and `rep2`).
+
 | Campaign | Corpus | Models | Cells |
 |---|---|---|---:|
-| `ieee118-anthropic` | IEEE 118, all 46 | Haiku 4.5, Sonnet 5, Opus 5 | 414 |
-| `ieee118-bedrock` | the same 46 scenarios | DeepSeek V3.2, Kimi K2.5, GLM-5 | 414 |
-| `ieee118-openai` | the same 46 scenarios | GPT-5.6 Sol | 138 |
-| `pegase89-anthropic` | PEGASE 89, all 46 | Haiku 4.5, Sonnet 5, Opus 5 | 414 |
-| `pegase89-bedrock` | the same 46 scenarios | DeepSeek V3.2, Kimi K2.5, GLM-5 | 414 |
-| `pegase89-openai` | the same 46 scenarios | GPT-5.6 Sol | 138 |
+| `ieee118-anthropic` | IEEE 118, all 46 | Haiku 4.5, Sonnet 5, Opus 5 | 1,242 |
+| `ieee118-bedrock` | the same 46 scenarios | DeepSeek V3.2, Kimi K2.5, GLM-5 | 1,242 |
+| `ieee118-openai` | the same 46 scenarios | GPT-5.6 Sol | 414 |
+| `pegase89-anthropic` | PEGASE 89, all 46 | Haiku 4.5, Sonnet 5, Opus 5 | 1,242 |
+| `pegase89-bedrock` | the same 46 scenarios | DeepSeek V3.2, Kimi K2.5, GLM-5 | 1,242 |
+| `pegase89-openai` | the same 46 scenarios | GPT-5.6 Sol | 414 |
 
 The sweep is resumable and writes one scenario at a time, so an interrupted run leaves whole cases
 rather than half-measured ones. It waits out provider outages instead of recording them as model

@@ -28,7 +28,7 @@ def test_published_campaigns_are_runnable_without_any_result_store():
     for name, campaign in campaigns.items():
         assert campaign.models, f"{name} names no models"
         assert campaign.configurations, f"{name} names no configurations"
-        assert campaign.repetitions >= 1
+        assert campaign.repetitions == 3
         assert campaign.max_runtime_seconds > 0
         assert campaign.data_dir.is_dir(), f"{name} points at a corpus that is not shipped"
 
@@ -41,7 +41,7 @@ def test_the_published_ieee118_campaigns_pin_the_same_46_scenarios():
     # Both providers ran the identical subset; a comparison table is only meaningful if they did.
     assert anthropic.scenarios == bedrock.scenarios
     assert len(anthropic.scenarios) == 46
-    assert anthropic.cells_per_scenario == 9
+    assert anthropic.cells_per_scenario == 27
 
 
 def test_frozen_scenarios_must_belong_to_the_held_out_split():

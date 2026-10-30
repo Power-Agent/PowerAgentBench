@@ -256,6 +256,9 @@ def test_batch_report_aggregates_real_scenarios_and_is_deterministic(tmp_path: P
     second = score_batch(batch_dir, out_dir=second_out, data_dir=DATASET_FULL, index_path=DATASET_INDEX)
 
     assert (first_out / "benchmark_report.json").exists()
+    attempt_reports = sorted(first_out.glob("attempt_*_score.json"))
+    assert len(attempt_reports) == len(SUCCESS_FIXTURES)
+    assert json.loads(attempt_reports[0].read_text(encoding="utf-8"))["scenario_id"] == "S0008"
     assert first["n_attempts"] == 5
     assert first["success_rate"] == 1.0
     assert first["n_maneuvers_success"]["mean"] == 1.0
@@ -267,6 +270,90 @@ def test_batch_report_aggregates_real_scenarios_and_is_deterministic(tmp_path: P
         for split, row in first["by_memory_split"].items()
     } == {"held_out": 5}
     assert _without_runtime(first) == _without_runtime(second)
+
+
+def test_cli_data_dir_selects_corpus_for_single_attempt(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from restorebench.scoring import score_maneuvers
+
+    attempt = tmp_path / "attempt.json"
+    output = tmp_path / "score.json"
+    _write_attempt(attempt, SUCCESS_FIXTURES[0])
+    calls: list[tuple[Path, Path]] = []
+
+    def fake_score_attempt_file(path: Path, *, data_dir: Path) -> dict[str, Any]:
+        calls.append((path, data_dir))
+        return {"scenario_id": "S0001", "status": "SUCCESS"}
+
+    monkeypatch.setattr(score_maneuvers, "score_attempt_file", fake_score_attempt_file)
+
+    score_maneuvers.main([
+        str(attempt),
+        "--data-dir",
+        "dataset/pegase89",
+        "--out",
+        str(output),
+    ])
+
+    assert calls == [(attempt, Path("dataset/pegase89/full"))]
+    assert output.is_file()
+
+
+def test_cli_data_dir_selects_matching_corpus_and_index_for_batch(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from restorebench.scoring import score_maneuvers
+
+    batch = tmp_path / "attempts.jsonl"
+    batch.write_text("", encoding="utf-8")
+    output = tmp_path / "scores"
+    calls: list[tuple[Path, Path, Path, Path]] = []
+
+    def fake_score_batch(
+        batch_path: Path,
+        *,
+        out_dir: Path,
+        data_dir: Path,
+        index_path: Path,
+    ) -> dict[str, Any]:
+        calls.append((batch_path, out_dir, data_dir, index_path))
+        return {"n_attempts": 0}
+
+    monkeypatch.setattr(score_maneuvers, "score_batch", fake_score_batch)
+
+    score_maneuvers.main([
+        "--batch",
+        str(batch),
+        "--data-dir",
+        "dataset/pegase89/full",
+        "--out",
+        str(output),
+    ])
+
+    assert calls == [(
+        batch,
+        output,
+        Path("dataset/pegase89/full"),
+        Path("dataset/pegase89/evaluation_manifest.json"),
+    )]
+
+
+def test_published_s0081_witness_converges_at_primary_tolerance() -> None:
+    from restorebench.scoring.score_maneuvers import score_attempt
+
+    witnesses = json.loads(Path("dataset/ieee118/private/witnesses.json").read_text(encoding="utf-8"))
+    witness = next(row for row in witnesses if row["scenario_id"] == "S0081")
+
+    report = score_attempt(
+        {"scenario_id": "S0081", "maneuvers": witness["maneuvers"]},
+        data_dir=DATASET_FULL,
+    )
+
+    assert report["status"] == "SUCCESS"
+    assert report["steps"][-1]["tolerance_used"] == 1e-8
 
 
 def test_aggregate_reports_tolerates_success_with_null_quality() -> None:
