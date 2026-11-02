@@ -1,6 +1,6 @@
 # PowerAgentBench
 
-PowerAgentBench is a benchmark suite for evaluating AI agents on power-system operation and planning tasks. The current release includes steady-state and dynamic-study tracks, covering contingency analysis, AC power-flow convergence restoration, dynamic model-quality review, dynamic security-risk screening, scripted baselines, and LLM/tool-agent evaluation.
+PowerAgentBench is a benchmark suite for evaluating AI agents on power-system operation and planning tasks. The current release includes steady-state and dynamic-study tracks, covering contingency analysis, AC power-flow convergence restoration, dynamic model-quality review, transient-stability severity prediction, dynamic security-risk screening, controller tuning, scripted baselines, and LLM/tool-agent evaluation.
 
 The benchmark is built around a public/hidden split. Agents see public case data, scenarios, action spaces, and tool APIs. Hidden evaluators recompute steady-state or dynamic validity and return discovery, evidence, safety, mitigation, efficiency, workflow, and reliability metrics.
 
@@ -38,13 +38,26 @@ PowerAgentBench/
 │   │       ├── dataset/                        # Frozen IEEE 118-bus and PEGASE 89-bus corpora
 │   │       └── tests/                          # Offline test suite (no API calls required)
 │   └── dynamic/
-│       └── level1/                             # Dynamic model-quality review (DMView + PSS/E)
-│           ├── README.md                       # Full benchmark spec + install prerequisites
-│           ├── actionspace.json                # REECAU1 gain action contract + test suite
-│           ├── actioncost.json                 # Per-simulation cost and budget
-│           ├── baseline_summary.json           # Corrupted-model 0/8 reference + good solution
-│           ├── solution_template.json
-│           └── harness/                        # Runnable harness (DMView automation + agent loop)
+│       ├── level1/                             # Dynamic model-quality review (DMView + PSS/E)
+│       │   ├── README.md                       # Full benchmark spec + install prerequisites
+│       │   ├── actionspace.json                # REECAU1 gain action contract + test suite
+│       │   ├── actioncost.json                 # Per-simulation cost and budget
+│       │   ├── baseline_summary.json           # Corrupted-model 0/8 reference + good solution
+│       │   ├── solution_template.json
+│       │   └── harness/                        # Runnable harness (DMView automation + agent loop)
+│       ├── level2/                             # Transient-stability severity prediction (PowerFactory + MCP)
+│       │   ├── README.md                       # Full benchmark spec, setup, and run paths
+│       │   ├── kpi_mcp_server.py               # MCP server: memory retrieval, prediction, simulation, scoring
+│       │   ├── compute_kpis.py                 # KPI extraction and severity score
+│       │   ├── spatial_temporal_risk.py        # Spatial-temporal voltage risk diagnostics
+│       │   ├── semantic_memory.json            # Training memory of simulated faults
+│       │   └── test_memory.json                # Held-out test scenarios
+│       └── level3/                             # TuneBench: BESS controller tuning (ANDES + MCP)
+│           ├── README.md                       # Full benchmark spec and run instructions
+│           ├── DESCRIPTION.txt                 # Task statement / agent prompt
+│           ├── test_grid.json                  # ANDES case: BESS on an infinite bus
+│           ├── Target_P.csv, Target_V.csv      # Reference trajectories
+│           └── andes_mcp/                      # MCP server exposing ANDES simulations
 ├── tests/                                     # Top-level Level 2/shared-library regression tests
 ├── scripts/                                    # Runnable entry points
 │   ├── build_case.py                           # Rebuild the stressed Level 1 scenario
@@ -197,6 +210,30 @@ See:
 
 ```text
 benchmarks/dynamic/level1/README.md
+```
+
+### Dynamic Level 2
+
+`benchmarks/dynamic/level2/` evaluates whether an agent can predict the severity of an unseen short-circuit fault on the IEEE 39-bus New England system. Each scenario is a bus or line fault with a given duration, reduced to a set of transient-stability KPIs and a scalar severity score in `[0, 1]`. The agent retrieves similar cases from a training memory (~584 simulated scenarios), commits a numeric prediction to disk for a held-out test scenario (~146 scenarios), then runs the ground-truth RMS simulation and is scored on the difference. The whole workflow is exposed through a single MCP server. A spatial-temporal voltage risk extension adds per-bus and duration-aware diagnostics without changing the severity score.
+
+> **Note:** KPI analysis and scoring run in plain Python 3.11+, but running new ground-truth simulations requires **DIgSILENT PowerFactory** (licensed). Set `BENCHMARK_DATA_DIR` and `POWERFACTORY_PYTHON_PATH` as described in the Level 2 README.
+
+See:
+
+```text
+benchmarks/dynamic/level2/README.md
+```
+
+### Dynamic Level 3
+
+`benchmarks/dynamic/level3/` is **TuneBench** — controller tuning of a battery energy storage system (BESS) modelled with the WECC generic renewable chain (REGCA1 + REECA1 + REPCA1) in the open-source [ANDES](https://github.com/CURENT/andes) simulator. The agent runs two consecutive tests, an active-power setpoint test and a voltage-reference step test, and tunes the corresponding control parameters so that the simulated response matches the reference trajectories. Simulations are only available through an MCP server, with a shared budget of 15 tuning runs plus two verification runs. Each run is scored by RMSE, max absolute error, and R² against the targets.
+
+Level 3 is self-contained: it has its own `requirements.txt` and MCP configuration and is run from its own directory.
+
+See:
+
+```text
+benchmarks/dynamic/level3/README.md
 ```
 
 ## Model and API Configuration

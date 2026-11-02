@@ -1,0 +1,229 @@
+=====================================================================
+RUN_FOLDER = RUN1
+(For a new repetition change only this name: RUN2, RUN3, ...)
+=====================================================================
+
+Everything you produce in this analysis must be saved ONLY inside the
+RUN_FOLDER directory (referred to below as <RUN>), in the working
+directory. If <RUN> already exists, stop and report it: do not
+overwrite it.
+
+Your task is to tune the control parameters of a battery energy storage
+system (BESS) in ANDES, modelled with the WECC chain REGCA1 (converter)
++ REECA1 (electrical control) + REPCA1 (plant control), using the
+"andes" MCP server available to you.
+
+Setup
+- The grid case to use in all runs is test_grid.json.
+- Read SIMULATION_setpoint_P.md: instructions to set up and run the
+  simulation with steps of the active power setpoint (Pline0 of
+  REPCA1). It is used to tune the active power branch.
+- Read SIMULATION_setpoint_V.md: instructions to set up and run the
+  simulation with a step of the voltage reference (Vref0 of REPCA1).
+  It is used to tune the voltage/reactive power branch.
+- The references are:
+  - Target_P.csv (P test): columns t_s, REGCA1.Pe, REGCA1.Qe
+  - Target_V.csv (V test): columns t_s, REGCA1.Pe, REGCA1.Qe, REGCA1.v
+  The mapping between exported variables and target columns is given
+  in the two .md files.
+- Work only with the files in this directory: do not read files in
+  other directories, nor the content of any other RUN* folders that may
+  be present (they are independent repetitions of the same benchmark).
+
+Objective
+Run BOTH tests and modify the parameters of the respective models so
+that the simulated quantities are as close as possible to the targets:
+- "P" test: modify ONLY the active power branch parameters; compare P 
+   and Q with Target_P.csv.
+- "V" test: modify ONLY the voltage/reactive power branch parameters; 
+   compare P, Q and V with Target_V.csv.
+The two tunings are CONSECUTIVE and share the same total run budget:
+1. First the P test: all P tuning runs, with PARAM_V at the original
+   values of test_grid.json.
+2. Closing the P test: choose the best P run (criterion below) and
+   record it in steps.md. From this point its PARAM_P are frozen: you
+   never go back to P tuning.
+3. Then the V test: EVERY V run, run 0 included, first applies the
+   frozen PARAM_P of the best P run and then the PARAM_V of the run.
+4. At the end, two OUT-OF-BUDGET verification runs (see "Final
+   verification runs") with the complete final configuration (best
+   PARAM_P + best PARAM_V).
+Operational details are in the two .md files.
+
+What you cannot modify
+- You cannot modify: the block diagram of the models, the
+  connection/identification parameters (idx, name, bus, gen, reg, ree,
+  line, busr, busf, u), the configuration switches (PFFLAG, VFLAG,
+  QFLAG, PFLAG, PQFLAG, VCFlag, RefFlag, Fflag, PLflag), the
+  initialization references (REECA1.Vref0, REECA1.Vref1), the
+  parameters not listed above (e.g. REECA1 Imax, Vdip, Vup, VDL curves;
+  REPCA1 Vfrz), nor REGCA1 and the other models (PV, Slack, Line, Bus,
+  BusFreq).
+  You cannot change the disturbance events, the simulation duration or
+  the exported variables with respect to the .md files.
+
+Evaluation metrics
+The integration step is adaptive, so the simulated time instants do
+not coincide with those of the target: linearly interpolate the
+simulation onto the t_s grid of the target (e.g. numpy.interp) and
+compute the metrics over the whole target window (P: 0-130 s,
+V: 0-30 s).
+For each run compute, for each compared quantity:
+- RMSE
+- max error (maximum absolute value of the difference)
+- R2 (coefficient of determination, 1 - SS_res/SS_tot with respect to
+  the target)
+Quantities: P test -> P, Q; V test -> P, Q, V.
+
+Best run selection criterion
+- P test: minimum RMSE_P; in case of a tie (within 5%) the minimum
+  maxerr_P wins.
+- V test: minimum (RMSE_Q + RMSE_V); in case of a tie (within 5%) the
+  minimum (maxerr_Q + maxerr_V) wins.
+The other metrics are reported but do not decide the ranking.
+The final verification runs (final_check) do not take part in the
+ranking.
+
+Final verification runs (out of budget)
+Once the V test is closed, run two simulations with the complete final
+configuration (PARAM_P of the best P run + PARAM_V of the best V run):
+- P verification: complete P test, output in <RUN>/P/final_check/
+- V verification: complete V test, output in <RUN>/V/final_check/
+Each final_check folder contains output.csv, params.json and
+metrics.json like the other runs. These two runs:
+- do not count towards the tuning budget of 15 runs (they are
+  additional);
+- are the metrics of the final configuration and must be reported in
+  steps.md, in the summary.csv files (final_check row), in
+  best_runs.json, in the final report and in the dashboard
+  ("final_check" curve).
+The V verification should reproduce the best V run (consistency
+check); the P verification shows the effect of the tuned PARAM_V on
+the P test (in particular on Q).
+
+Constraints
+- Maximum TUNING budget: 15 simulations, i.e. 15 calls to the run_tds
+  tool, including the two baselines and including failed or
+  non-converging runs. In addition, ONLY the 2 final verification runs
+  are allowed (calls #16 and #17 if the whole tuning budget has been
+  used). The MCP server counts the calls and rejects those beyond the
+  seventeenth: calls beyond the fifteenth must never be used for
+  tuning. Split the tuning budget between the two tests as you see fit
+  and declare at the start how you intend to split it. You can change
+  the split during the work, but you must declare it. Since the tests
+  are consecutive, the split cannot plan to go back to the P test after
+  the V test has started.
+- Simulations are run ONLY through the "andes" MCP tools. Importing or
+  running ANDES from Python scripts or from the command line is
+  forbidden.
+- Python is used only for post-processing (metrics, summary files,
+  dashboard). Use the Python interpreter available in the environment
+  (`python`).
+- P test: run 0 is the baseline with the current parameters of
+  test_grid.json, without modifications.
+- V test: run 0 is the baseline with the PARAM_P of the best P run and
+  PARAM_V at the original values of test_grid.json. The improvements of
+  the V test are computed with respect to this run.
+- Before each subsequent run (in both tests), explain in one line which
+  parameters you change and why, based on the metrics of the previous
+  runs.
+
+Saving results
+Mandatory structure of the <RUN> folder:
+
+<RUN>/
+  README.md             -> folder index: what each subfolder contains
+                           and where to find the final results
+  P/                    -> P setpoint test (active power branch tuning)
+    run_0/, run_1/, ... -> one folder per run of the P test
+    final_check/        -> final P verification run (out of budget)
+    summary.csv
+  V/                    -> V setpoint test (voltage branch tuning)
+    run_0/, run_1/, ...
+    final_check/        -> final V verification run (out of budget)
+    summary.csv
+  steps/
+    plan.md             -> initial split of the budget between P and V
+                           and tuning strategy
+    steps.md            -> chronological log: for each run (P or V),
+                           global sequential number of run_tds (1..15
+                           for tuning, then the 2 final verifications),
+                           changed parameters and one-line rationale
+                           based on the previous metrics, outcome (main
+                           metrics); also record here every change of
+                           the budget split, the closing of the P test
+                           (best P run and frozen PARAM_P) and the
+                           outcome of the verifications
+  errors/
+    errors.md           -> every error or anomaly: failed MCP calls,
+                           non-converging power flow or TDS, unstable
+                           simulations, errors in the post-processing
+                           scripts, and how you handled them. If there
+                           were no errors, state it explicitly.
+  final/
+    best_runs.json      -> for each test: best run, complete
+                           parameters, parameters changed with respect
+                           to the baseline, all metrics, % RMSE
+                           improvement with respect to run 0; in
+                           addition the complete final configuration
+                           (PARAM_P + PARAM_V) and the metrics of the
+                           two final_check runs
+    final_report.md     -> the final answer (see below)
+    cost.json           -> see "Computational cost"
+  dashboard/
+    dashboard.html      -> see "Final dashboard"
+  scripts/              -> the Python post-processing scripts you wrote
+                           and used (metrics, summaries, dashboard)
+
+Content of each folder <RUN>/P/run_i/, <RUN>/V/run_i/ and
+<RUN>/P/final_check/, <RUN>/V/final_check/:
+- output.csv   -> simulated time series, exported directly with
+                  export_results (path: <RUN>/P/run_<i>/output.csv,
+                  <RUN>/V/run_<i>/output.csv or .../final_check/output.csv)
+- params.json  -> ALL the numerical parameters of REPCA1 and REECA1
+                  used in that run (read them with get_device_params
+                  after set_param); in the V runs list separately the
+                  PARAM_P inherited from the P test and the modified
+                  PARAM_V
+- metrics.json -> P test: rmse_P, rmse_Q, maxerr_P, maxerr_Q, r2_P, r2_Q
+                  V test: as above + rmse_V, maxerr_V, r2_V
+The two summary.csv files have one row per run: run, parameters
+changed with respect to the baseline, all the metrics of the test; a
+final_check row at the bottom.
+
+Computational cost
+At the start of the analysis save the start time and at the end (after
+generating the dashboard) compute the total time.
+Save in <RUN>/final/cost.json: total_time_s, tokens_total, estimated,
+n_tds_runs (P, V and tuning total, plus the number of final
+verification runs and the overall total of run_tds calls).
+For tokens_total use the real value only if you actually know it;
+otherwise report an estimate and set estimated = true. The real tokens
+are also measured externally.
+
+Final dashboard
+At the end generate a static local HTML dashboard
+(<RUN>/dashboard/dashboard.html) using Plotly from CDN, with two
+sections:
+- P test section: P plot and Q plot.
+- V test section: P plot, Q plot and V plot.
+In each plot: curves Target, 0, 1, 2, ..., final_check; Target in thick
+black, the runs in progressive colours, final_check dashed and clearly
+distinguishable, legend with RMSE and R2 of each curve, labelled axes
+(time [s], P [pu], Q [pu], V [pu]).
+Below the plots of each section a table with the content of the
+corresponding summary.csv, with the best run row highlighted and the
+final_check row distinct.
+At the bottom of the dashboard a line with the name of the <RUN>
+folder, the total time, the total tokens (stating whether estimated)
+and the number of simulations used (tuning + verifications).
+
+Final answer
+Write in <RUN>/final/final_report.md, and also report in chat, which is
+the best run for the P test (active power branch) and which is the
+best run for the V test (voltage branch), with the final parameters,
+the metrics, and why in your opinion those parameters bring the
+response closer to the target. Also report the complete final
+configuration (PARAM_P + PARAM_V) and the metrics of the two
+final_check verification runs, comparing them with the best runs of
+each test.

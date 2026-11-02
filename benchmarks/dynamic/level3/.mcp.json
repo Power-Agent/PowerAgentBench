@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "andes": {
+      "type": "stdio",
+      "command": "python",
+      "args": ["-m", "andes_mcp.server"],
+      "env": {
+        "ANDES_MCP_MAX_TDS": "17",
+        "ANDES_MCP_TDS_LOG": "tds_audit_log.jsonl"
+      }
+    }
+  }
+}
